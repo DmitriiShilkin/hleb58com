@@ -1,0 +1,24 @@
+{% extends 'default.html' %}
+
+{% block title %}
+	Account
+{% endblock title %}
+
+{% block content %}
+    <h2>Личный кабинет</h2>
+	<hr>
+	<button>
+		<a href="{% url 'profile' pk=request.user.pk %}">Настройка профиля</a>
+	</button>
+	{% for group in request.user.groups.all %}
+		{% if group.name == 'management'  %}
+			<button>
+				<a href="">Управление</a>
+			</button>
+		{% else %}
+			<button>
+				<a href="">Заказы</a>
+			</button>
+		{% endif %}
+	{% endfor %}
+{% endblock content %}

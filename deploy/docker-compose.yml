@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+
+  server:
+    image: nginx:alpine
+    container_name: hleb58-server
+    hostname: hleb58-server
+    restart: always
+    depends_on:
+      - web
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./static:/app/static
+      - media:/app/media
+  web:
+    image: dmitriishilkin/hleb58:latest
+    container_name: hleb58-web
+    command: bash -c "/app/run.sh"
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./static:/app/static
+      - media:/app/media
+      - db:/app/db
+
+volumes:
+  media:
+  db:

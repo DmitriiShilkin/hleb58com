@@ -1,0 +1,26 @@
+{% extends 'default.html' %}
+
+{% block content %}
+    <h2>Удаление сотрудника</h2>
+    <hr>
+	{% for group in request.user.groups.all %}
+		{% if group.name == 'management'  %}
+            <form action="" method="post">
+                {% csrf_token %}
+                <p>Вы точно хотите удалить "
+                    {{ object.last_name }}
+                    {{ object.first_name }}
+                    {% if object.middle_name is None %}
+
+                    {% else %}
+                        {{ object.middle_name }}
+                    {% endif %}
+                    "?
+                </p>
+                <hr>
+                <input type="button" onclick="history.back();" value="Назад"/>
+                <input type="submit" value="Удалить" />
+            </form>
+        {% endif %}
+    {% endfor %}
+{% endblock content %}

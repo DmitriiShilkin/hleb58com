@@ -1,0 +1,16 @@
+{% extends 'default.html' %}
+
+{% block title %}
+	Management
+{% endblock title %}
+
+{% block content %}
+    <h2>Панель управления</h2>
+	<hr>
+	<button>
+		<a href="{% url 'staff_list' %}">Сотрудники</a>
+	</button>
+	<button>
+		<a href="">Отчеты</a>
+	</button>
+{% endblock content %}

@@ -1,0 +1,27 @@
+{% extends 'default.html' %}
+
+{% block title %}
+	Product
+{% endblock title %}
+
+{% block content %}
+    <h2>Изменение продукта</h2>
+	<hr>
+    <form enctype="multipart/form-data" action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        {{ formset.as_p }}
+        <hr>
+        <input type="button" onclick="history.back();" value="Назад"/>
+        <input type="submit" value="Сохранить">
+    </form>
+    <script>
+		function limit_input(id, max_length) {
+			var field = document.getElementById(id);
+			if (field.value.length > max_length) {
+				field.value = field.value.slice(0, max_length);
+			}
+		}
+	</script>
+
+{% endblock content %}

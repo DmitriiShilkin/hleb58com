@@ -1,0 +1,76 @@
+{% extends 'default.html' %}
+
+{% load custom_tags %}
+
+{% load custom_filters %}
+
+{% block title %}
+	Invisible Products
+{% endblock title %}
+
+{% block content %}
+    <h2>Скрытая продукция</h2>
+    <hr>
+
+	{% if invisibles %}
+		<table cellpadding="10">
+			<tr>
+				<th>Фото</th>
+				<th>Наименование</th>
+				<th>Описание</th>
+				<th>Цена</th>
+				<th>Количество</th>
+				<th>Категория</th>
+			</tr>
+			{% for product in invisibles %}
+				<tr>
+					{% with product.images.first as obj  %}
+						<td><img src="{{ obj.image.url }}" alt="Изображение не найдено" width="100"></td>
+					{% endwith %}
+					<td><a href="{% url 'product_detail' pk=product.pk %}">{{ product.name }}</a></td>
+					<td>{{ product.description|strong }}</td>
+					<td>{{ product.new_price|floatformat:2 }}&nbsp;&#8381;</td>
+					<td>{{ product.quantity }}&nbsp;шт.</td>
+					<td>
+						{% for category in product.category.all %}
+							{{ category }}<br>
+						{% endfor %}
+					</td>
+					<td><button><a href="{% url 'product_visible' pk=product.pk %}">Показать</a></button></td>
+					<td><button><a href="{% url 'product_update' pk=product.pk %}">Изменить</a></button></td>
+				</tr>
+			{% endfor %}
+		</table>
+	{% else %}
+		<p>Скрытой продукции нет!</p>
+	{% endif %}
+	<!-- Добавляем пагинацию на страницу -->
+	<!-- Информация о предыдущих страницах -->
+	{% if paginator.num_pages != 1 %}
+		{% if page_obj.has_previous %}
+			<a href="?{% url_replace page=1 %}">&laquo;Первая</a>
+			...
+			<a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+		{% endif %}
+		<!-- Информация о текущей странице -->
+		|{{ page_obj.number }}|
+		<!-- Информация о следующих страницах -->
+		{% if page_obj.has_next %}
+			<a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+			...
+			<a href="?{% url_replace page=page_obj.paginator.num_pages %}">Последняя&raquo;</a>
+		{% endif %}
+	{% endif %}
+
+    <script>
+		function limit_input(id) {
+			var field = document.getElementById(id);
+			var max_length = 7;
+			if (field.value.length > max_length) {
+				field.value = field.value.slice(0, max_length);
+			}
+		}
+	</script>
+
+
+{% endblock content %}

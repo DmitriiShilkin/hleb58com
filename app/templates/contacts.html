@@ -1,0 +1,26 @@
+{% extends 'default.html' %}
+
+{% block title %}
+	Contacts
+{% endblock title %}
+
+{% block content %}
+    <h2>Контакты</h2>
+    <hr>
+    <p>г. Пенза, ул. Перспективная, стр. 4,<br>
+        тел. +7 (8412) 23-66-06,<br>
+        тел. +7 (902) 208-17-15,<br>
+        тел. +7 (927) 375-72-28,<br>
+        e-mail: penzahleb58@gmail.com.</p>
+<hr>
+<button>
+    <a href="{% url 'send_message' %}">Написать нам</a>
+</button>
+<button>
+    <a href="{% url 'become_dealer' %}">Стать поставщиком</a>
+</button>
+<button>
+    <a href="/media/upload/file.pdf" download="file.pdf">Политика конфиденциальности</a>
+</button>
+
+{% endblock content %}

@@ -1,0 +1,10 @@
+### Django ###
+__pycache__/
+*.log
+*.pot
+*.pyc
+local_settings.py
+
+cache_files/
+venv/
+media/

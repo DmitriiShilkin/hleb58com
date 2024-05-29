@@ -1,0 +1,16 @@
+{% extends 'default.html' %}
+
+{% block title %}
+	Message
+{% endblock title %}
+
+{% block content %}
+    <h2>Написать нам</h2>
+    <hr>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="button" onclick="history.back();" value="Назад"/>
+        <input type="submit" value="Отправить" />
+    </form>
+{% endblock content %}

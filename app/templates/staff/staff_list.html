@@ -1,0 +1,68 @@
+{% extends 'default.html' %}
+
+{% load custom_tags %}
+
+{% block title %}
+	Staff
+{% endblock title %}
+
+{% block content %}
+    <h2>Сотрудники</h2>
+    <hr>
+	{% for group in request.user.groups.all %}
+		{% if group.name == 'management'  %}
+			<button>
+				<a href="{% url 'staff_signup' %}">Добавить нового сотрудника</a>
+			</button>
+			<button>
+				<a href="{% url 'fired_list' %}">Уволенные сотрудники</a>
+			</button>
+			{% if staff %}
+				<table cellpadding="10">
+					<tr>
+						<th>Фамилия</th>
+						<th>Имя</th>
+						<th>Отчество</th>
+						<th>Должность</th>
+						<th>Номер трудового договора</th>
+					</tr>
+					{% for person in staff %}
+						<tr>
+							<td>{{ person.last_name }}</td>
+							<td>{{ person.first_name }}</td>
+							{% if person.middle_name is None %}
+								<td>-</td>
+							{% else %}
+								<td>{{ person.middle_name }}</td>
+							{% endif %}
+							<td>{{ person.get_position_display }}&nbsp;</td>
+							<td>{{ person.contract }}&nbsp;</td>
+							<td><button><a href="{% url 'staff_profile' pk=person.pk %}">Изменить</a></button></td>
+							<td><button><a href="{% url 'staff_remove' pk=person.pk %}">Удалить</a></button></td>
+						</tr>
+					{% endfor %}
+				</table>
+			{% else %}
+				<p>Сотрудников нет!</p>
+			{% endif %}
+		{% endif %}
+	{% endfor %}
+	<!-- Добавляем пагинацию на страницу -->
+	<!-- Информация о предыдущих страницах -->
+	{% if paginator.num_pages != 1 %}
+		{% if page_obj.has_previous %}
+			<a href="?{% url_replace page=1 %}">&laquo;Первая</a>
+			...
+			<a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+		{% endif %}
+		<!-- Информация о текущей странице -->
+		|{{ page_obj.number }}|
+		<!-- Информация о следующих страницах -->
+		{% if page_obj.has_next %}
+			<a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+			...
+			<a href="?{% url_replace page=page_obj.paginator.num_pages %}">Последняя&raquo;</a>
+		{% endif %}
+	{% endif %}
+
+{% endblock content %}

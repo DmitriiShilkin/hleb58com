@@ -1,0 +1,85 @@
+{% extends 'default.html' %}
+
+{% load custom_tags %}
+
+{% load custom_filters %}
+
+{% block title %}
+	Products
+{% endblock title %}
+
+{% block content %}
+    <h2>Продукция</h2>
+    <hr>
+	{% if request.user.is_staff %}
+		<button><a href="{% url 'product_create' %}">Добавить продукт</a></button>
+		<button><a href="{% url 'invisible_list' %}">Скрытая продукция</a></button>
+		<button><a href="{% url 'category_list' %}">Категории</a></button>
+	{% endif %}
+
+	{% if visibles %}
+		<table cellpadding="10">
+			<tr>
+				<th>Фото</th>
+				<th>Наименование</th>
+				<th>Описание</th>
+				<th>Цена</th>
+				{% if request.user.is_staff %}
+					<th>Количество</th>
+					<th>Категория</th>
+				{% endif %}
+			</tr>
+			{% for product in visibles %}
+				<tr>
+					{% with product.images.first as obj  %}
+						<td><img src="{{ obj.image.url }}" alt="Изображение не найдено" width="100"></td>
+					{% endwith %}
+					<td><a href="{% url 'product_detail' pk=product.pk %}">{{ product.name }}</a></td>
+					<td>{{ product.description|strong }}</td>
+					<td>{{ product.new_price|floatformat:2 }}&nbsp;&#8381;</td>
+					{% if request.user.is_staff %}
+						<td>{{ product.quantity }}&nbsp;шт.</td>
+						<td>
+							{% for category in product.category.all %}
+								{{ category }}<br>
+							{% endfor %}
+						</td>
+						<td><button><a href="{% url 'product_invisible' pk=product.pk %}">Скрыть</a></button></td>
+						<td><button><a href="{% url 'product_update' pk=product.pk %}">Изменить</a></button></td>
+					{% endif %}
+
+				</tr>
+			{% endfor %}
+		</table>
+	{% else %}
+		<p>Продукции нет!</p>
+	{% endif %}
+	<hr>
+	<button>
+		<a href="{% url 'send_message' %}">Написать нам</a>
+	</button>
+	<button>
+		<a href="{% url 'become_dealer' %}">Стать поставщиком</a>
+	</button>
+	<button>
+		<a href="/media/upload/file.pdf" download="file.pdf">Политика конфиденциальности</a><br>
+	</button>
+	<!-- Добавляем пагинацию на страницу -->
+	<!-- Информация о предыдущих страницах -->
+	{% if paginator.num_pages != 1 %}
+		{% if page_obj.has_previous %}
+			<a href="?{% url_replace page=1 %}">&laquo;Первая</a>
+			...
+			<a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+		{% endif %}
+		<!-- Информация о текущей странице -->
+		|{{ page_obj.number }}|
+		<!-- Информация о следующих страницах -->
+		{% if page_obj.has_next %}
+			<a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+			...
+			<a href="?{% url_replace page=page_obj.paginator.num_pages %}">Последняя&raquo;</a>
+		{% endif %}
+	{% endif %}
+
+{% endblock content %}

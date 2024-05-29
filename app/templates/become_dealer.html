@@ -1,0 +1,15 @@
+{% extends 'default.html' %}
+
+{% block title %}
+	Dealer
+{% endblock title %}
+
+{% block content %}
+    <h2>Стать поставщиком</h2>
+    <hr>
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="button" onclick="history.back();" value="Назад"/>
+        <input type="submit" value="Отправить" />
+{% endblock content %}

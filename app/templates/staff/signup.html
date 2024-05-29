@@ -1,0 +1,21 @@
+{% extends "default.html" %}
+
+{% block title %}
+	Staff Sign Up
+{% endblock title %}
+
+{% block content %}
+	<h2> Регистрация сотрудника</h2>
+	<hr>
+	{% for group in request.user.groups.all %}
+		{% if group.name == 'management'  %}
+			<form method="post" action="">
+				{% csrf_token %}
+				{{ form.as_p }}
+				<hr>
+				<input type="button" onclick="history.back();" value="Назад"/>
+				<input type="submit" value="Продолжить">
+			</form>
+		{% endif %}
+	{% endfor %}
+{% endblock content %}
