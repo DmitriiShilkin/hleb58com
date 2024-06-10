@@ -4,6 +4,8 @@
 
 {% load custom_filters %}
 
+{% load static %}
+
 {% block title %}
 	Products
 {% endblock title %}
@@ -18,7 +20,7 @@
 	{% endif %}
 
 	{% if visibles %}
-		<table cellpadding="10">
+		<table cellpadding="10" align="center">
 			<tr>
 				<th>Фото</th>
 				<th>Наименование</th>
@@ -31,9 +33,13 @@
 			</tr>
 			{% for product in visibles %}
 				<tr>
-					{% with product.images.first as obj  %}
-						<td><img src="{{ obj.image.url }}" alt="Изображение не найдено" width="100"></td>
-					{% endwith %}
+					{% if product.images.all %}
+						{% with product.images.first as obj  %}
+							<td><img src="{{ obj.image.url }}" alt="" width="100"></td>
+						{% endwith %}
+					{% else %}
+						<td><img src="{% static 'no_image.png' %}" width="100"></td>
+					{% endif %}
 					<td><a href="{% url 'product_detail' pk=product.pk %}">{{ product.name }}</a></td>
 					<td>{{ product.description|strong }}</td>
 					<td>{{ product.new_price|floatformat:2 }}&nbsp;&#8381;</td>

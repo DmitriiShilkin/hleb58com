@@ -1,0 +1,17 @@
+{% extends 'default.html' %}
+
+{% block title %}
+	Reports
+{% endblock title %}
+
+{% block content %}
+    <h2>Отчеты по заказам</h2>
+	<hr>
+    <a href="{% url 'stats' days=1 %}">Сводка по заказам за последний день</a><br>
+    <a href="{% url 'stats' days=7 %}">Сводка по заказам за последнюю неделю</a><br>
+    <a href="{% url 'stats' days=30 %}">Сводка по заказам за последний месяц</a><br>
+    <a href="{% url 'stats' days=91 %}">Сводка по заказам за последний квартал</a><br>
+    <a href="{% url 'stats' days=182 %}">Сводка по заказам за последнее полугодие</a><br>
+    <a href="{% url 'stats' days=365 %}">Сводка по заказам за последний год</a><br>
+{% endblock content %}
+

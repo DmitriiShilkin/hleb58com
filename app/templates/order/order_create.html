@@ -1,0 +1,65 @@
+{% extends 'default.html' %}
+
+{% load static %}
+
+{% block title %}
+    Order Add
+{% endblock title %}
+
+{% block content %}
+    <h2>Оформление заказа</h2>
+    <hr>
+    {% if cart %}
+        <table class="cart" cellpadding="10" align="center">
+            <thead>
+            <tr>
+                <th>Фото</th>
+                <th>Наименование</th>
+                <th>Количество</th>
+                <th>Цена за единицу</th>
+                <th>Цена</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in cart %}
+                {% with product=item.product %}
+                    <tr>
+                        <td>
+                            {% if product.images.all %}
+                                {% with product.images.first as obj  %}
+                                    <img src="{{ obj.image.url }}" width="100">
+                                {% endwith %}
+                            {% else %}
+                                <img src="{% static 'no_image.png' %}" width="100">
+                            {% endif %}
+                        </td>
+                        <td>{{ product.name }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td class="num">{{ item.price }} &#8381;</td>
+                        <td class="num">{{ item.total_price }} &#8381;</td>
+                    </tr>
+                {% endwith %}
+            {% endfor %}
+            {% if cart.coupon %}
+            <tr class="total">
+                <td>"Купон {{ cart.coupon.name }}" (скидка {{ cart.coupon.discount }}%)</td>
+                <td colspan="3"></td>
+                <td class="num">- {{ cart.get_discount|floatformat:"2" }} &#8381;</td>
+            </tr>
+            {% endif %}
+            <tr class="total">
+                <td>Итого</td>
+                <td colspan="3"></td>
+                <td class="num">{{ cart.get_total_price_after_discount|floatformat:"2" }} &#8381;</td>
+            </tr>
+            </tbody>
+        </table>
+    {% endif %}
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <hr>
+        <input type="button" onclick="history.back();" value="Назад"/>
+        <input type="submit" value="Оформить" />
+    </form>
+{% endblock content %}

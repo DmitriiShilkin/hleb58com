@@ -2,7 +2,7 @@ from django.core.validators import MinLengthValidator, MinValueValidator
 from django.db import models
 from django.utils import timezone
 
-from .constants import PROMOCODE_PERCENT, STICKERS
+from .constants import STICKERS
 from .services import get_image_path
 
 
@@ -34,45 +34,6 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
-
-
-# Модель для Промокода
-class PromoCode(models.Model):
-    created_at = models.DateTimeField(
-        default=timezone.now,
-        editable=False
-    )
-    name = models.CharField(
-        verbose_name='Название',
-        unique=True,
-        max_length=10,
-        validators=[
-            MinLengthValidator(3),
-        ]
-    )
-    discount = models.FloatField(
-        verbose_name='Размер скидки',
-        validators=[
-            MinValueValidator(0.0),
-        ]
-    )
-    expire_at = models.DateTimeField(
-        verbose_name='Действует до',
-    )
-    is_percent = models.BooleanField(
-        verbose_name='Процент',
-        choices=PROMOCODE_PERCENT,
-        default=True
-    )
-
-    def __str__(self):
-        return self.name
-
-    def is_expired(self):
-        if self.expire_at <= timezone.now():
-            return True
-        else:
-            return False
 
 
 # Модель для Продукта
@@ -169,23 +130,26 @@ class Product(models.Model):
         verbose_name='Категория',
         related_name='products'
     )
-    promo_code = models.ManyToManyField(
-        PromoCode,
-        verbose_name='Промокод',
-        related_name='products',
-        blank=True,
-    )
 
     def __str__(self):
         return self.name
 
     def make_visible(self):
         self.is_visible = True
-        self.save()
+        self.save(self.is_visible)
 
     def make_invisible(self):
         self.is_visible = False
-        self.save()
+        self.save(self.is_visible)
+
+    def add_to_cart(self, quantity):
+        if self.quantity >= quantity:
+            self.quantity -= quantity
+            self.save(self.quantity)
+
+    def remove_from_cart(self, quantity):
+        self.quantity += quantity
+        self.save(self.quantity)
 
     def save(self, *args, **kwargs):
         self.new_price = self.price * (1 - self.discount / 100 + self.increment / 100) \

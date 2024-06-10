@@ -21,12 +21,15 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('', include('products.urls')),
+    path('', include('news.urls')),
     path('admin/', admin.site.urls),
-    path('category/', include('products.category_urls')),
     path('company/', include('company.urls')),
     path('sign/', include('sign.urls')),
     path('staff/', include('staff.urls')),
+    path('coupon/', include('coupons.urls')),
+    path('product/', include('products.urls')),
+    path('cart/', include('cart.urls')),
+    path('order/', include('orders.urls')),
 ]
 
 if settings.DEBUG:

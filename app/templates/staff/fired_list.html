@@ -17,6 +17,7 @@
                         <th>Фамилия</th>
                         <th>Имя</th>
                         <th>Отчество</th>
+                        <th>ИНН</th>
                         <th>Должность</th>
                         <th>Номер трудового договора</th>
                     </tr>
@@ -29,6 +30,7 @@
                             {% else %}
                                 <td>{{ person.middle_name }}</td>
                             {% endif %}
+                            <td>{{ person.individual_taxpayer_number }}</td>
                             <td>{{ person.get_position_display }}&nbsp;</td>
                             <td>{{ person.contract }}&nbsp;</td>
                             <td><button><a href="{% url 'staff_restore' pk=person.pk %}">Вернуть в штат</a></button></td>

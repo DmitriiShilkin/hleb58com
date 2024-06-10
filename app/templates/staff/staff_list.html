@@ -18,11 +18,12 @@
 				<a href="{% url 'fired_list' %}">Уволенные сотрудники</a>
 			</button>
 			{% if staff %}
-				<table cellpadding="10">
+				<table cellpadding="10" align="center">
 					<tr>
 						<th>Фамилия</th>
 						<th>Имя</th>
 						<th>Отчество</th>
+						<th>ИНН</th>
 						<th>Должность</th>
 						<th>Номер трудового договора</th>
 					</tr>
@@ -35,6 +36,7 @@
 							{% else %}
 								<td>{{ person.middle_name }}</td>
 							{% endif %}
+							<td>{{ person.individual_taxpayer_number }}</td>
 							<td>{{ person.get_position_display }}&nbsp;</td>
 							<td>{{ person.contract }}&nbsp;</td>
 							<td><button><a href="{% url 'staff_profile' pk=person.pk %}">Изменить</a></button></td>

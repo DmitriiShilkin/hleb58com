@@ -1,0 +1,55 @@
+{% extends 'default.html' %}
+
+{% load custom_tags %}
+
+{% block title %}
+	Coupons
+{% endblock title %}
+
+{% block content %}
+    <h2>Промокоды</h2>
+    <hr>
+	<button><a href="{% url 'coupon_create' %}">Добавить промокод</a></button>
+
+	{% if coupons %}
+		<table cellpadding="10" align="center">
+			<tr>
+				<th>Название</th>
+				<th>Действует c</th>
+				<th>Действует до</th>
+				<th>Размер скидки</th>
+				<th>Активен</th>
+			</tr>
+			{% for coupon in coupons %}
+				<tr>
+					<td>{{ coupon.name }}</td>
+					<td>{{ coupon.valid_from|date:'d.m.Y' }}</td>
+					<td>{{ coupon.valid_to|date:'d.m.Y' }}</td>
+					<td>{{ coupon.discount }}%</td>
+					<td>{{ coupon.is_active|yesno:'Да,Нет' }}</td>
+					<td><button><a href="{% url 'coupon_update' pk=coupon.pk %}">Изменить</a></button></td>
+				</tr>
+			{% endfor %}
+		</table>
+	{% else %}
+		<p>Промокодов нет!</p>
+	{% endif %}
+	<!-- Добавляем пагинацию на страницу -->
+	<!-- Информация о предыдущих страницах -->
+	{% if paginator.num_pages != 1 %}
+		{% if page_obj.has_previous %}
+			<a href="?{% url_replace page=1 %}">&laquo;Первая</a>
+			...
+			<a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+		{% endif %}
+		<!-- Информация о текущей странице -->
+		|{{ page_obj.number }}|
+		<!-- Информация о следующих страницах -->
+		{% if page_obj.has_next %}
+			<a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+			...
+			<a href="?{% url_replace page=page_obj.paginator.num_pages %}">Последняя&raquo;</a>
+		{% endif %}
+	{% endif %}
+
+{% endblock content %}

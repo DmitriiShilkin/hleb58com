@@ -9,15 +9,10 @@
 {% block content %}
     <h2>Категории</h2>
     <hr>
-	<!--  Добавляем форму, которая объединяет набор полей, которые будут отправляться в запросе -->
-	<form action="" method="get">
-		<!-- Переменная, которую мы передали через контекст, может сгенерировать нам форму с полями -->
-		{{ filterset.form.as_p }}
-		<button><a href="{% url 'category_create' %}">Добавить категорию</a></button>
-	</form>
+	<button><a href="{% url 'category_create' %}">Добавить категорию</a></button>
 
 	{% if categories %}
-		<table cellpadding="10">
+		<table cellpadding="10" align="center">
 			<tr>
 				<th>Название</th>
 				<th>Описание</th>

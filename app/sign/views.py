@@ -4,11 +4,12 @@ from string import hexdigits
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import Group
+from django.core.exceptions import ImproperlyConfigured
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
-# from django.core.cache import cache
 from django.views.generic import CreateView, UpdateView, TemplateView
 
 from .forms import BaseRegisterForm, CustomUserUpdateForm
@@ -47,11 +48,6 @@ class ActivateView(CreateView):
     template_name = 'sign/activate.html'
 
     def get_context_data(self, **kwargs):
-        # request_user = self.kwargs.get('user')
-        # cache_user = cache.get("username")
-        # if request_user == "AnonymousUser":
-        #     user_ = cache_user
-        # else:
         user_ = self.kwargs.get('user')
         one_time_code = OneTimeCode.objects.filter(user=user_).first()
         if one_time_code and one_time_code.is_expired():
@@ -60,17 +56,11 @@ class ActivateView(CreateView):
         if not one_time_code:
             code = ''.join(random.sample(hexdigits, 5))
             OneTimeCode.objects.create(user=user_, code=code)
-            # if "@" in user_:
-            #     user = CustomUser.objects.get(email=user_)
-            # else:
             user = CustomUser.objects.get(username=user_)
             send_one_time_code(code, user)
 
     def post(self, request, *args, **kwargs):
         if 'code' in request.POST:
-            # if "AnonymousUser" in request.path:
-            #     user = cache.get('username')
-            # else:
             user = request.path.split('/')[-1]
             one_time_code = OneTimeCode.objects.filter(code=request.POST['code'], user=user).first()
             if one_time_code:
@@ -84,11 +74,36 @@ class ActivateView(CreateView):
                 return render(self.request, 'sign/invalid_code.html')
 
 
-class CustomUserUpdateView(LoginRequiredMixin, UpdateView):
+class CustomUserUpdateView(PermissionRequiredMixin, UpdateView):
     model = CustomUser
     form_class = CustomUserUpdateForm
     template_name = 'sign/customuser_update.html'
     success_url = reverse_lazy('product_list')
+    permission_required = ('sign.change_customuser',)
+    raise_exception = True
+
+    def get_permission_required(self):
+        self.object = self.get_object()
+        if not (
+                self.request.user == self.object or
+                self.request.user.is_superuser
+        ):
+            content = f'''
+                <p style="font-size: 2em; font-weight: bold; font-family: Times New Roman;">403 Forbidden</p>
+            '''
+            return HttpResponse(content=content)
+        if self.permission_required is None:
+            raise ImproperlyConfigured(
+                f"{self.__class__.__name__} is missing the "
+                f"permission_required attribute. Define "
+                f"{self.__class__.__name__}.permission_required, or override "
+                f"{self.__class__.__name__}.get_permission_required()."
+            )
+        if isinstance(self.permission_required, str):
+            perms = (self.permission_required,)
+        else:
+            perms = self.permission_required
+        return perms
 
 
 @login_required

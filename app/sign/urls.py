@@ -20,11 +20,11 @@ from .views import (
 
 urlpatterns = [
     path('login/', LoginView.as_view(template_name='sign/login.html'), name='login'),
-    path('activate/<str:user>', ActivateView.as_view(), name='activate'),
+    path('activate/<str:user>/', ActivateView.as_view(), name='activate'),
     path('logout/', LogoutView.as_view(template_name='sign/logout.html'), name='logout'),
     path('signup/', BaseRegisterView.as_view(), name='signup'),
     path('account/', CustomUserAccountView.as_view(), name='account'),
-    path('profile/<int:pk>', CustomUserUpdateView.as_view(), name='profile'),
+    path('profile/<int:pk>/', CustomUserUpdateView.as_view(), name='profile'),
     path('password_change/', password_change, name='password_change'),
     path('password_change_done/', password_change_done, name='password_change_done'),
     path('password_reset/', PasswordResetView.as_view(

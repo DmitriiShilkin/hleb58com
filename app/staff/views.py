@@ -1,5 +1,7 @@
 from django.contrib.auth.decorators import permission_required
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.core.exceptions import ImproperlyConfigured
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import Group
 from django.urls import reverse_lazy
@@ -72,13 +74,81 @@ class StaffUpdateView(PermissionRequiredMixin, UpdateView):
     permission_required = ('staff.change_staff',)
     raise_exception = True
 
+    def get_permission_required(self):
+        self.object = self.get_object()
+        if not (
+                self.request.user.email == self.object.email or
+                self.request.user.is_superuser
+        ):
+            content = f'''
+                <p style="font-size: 2em; font-weight: bold; font-family: Times New Roman;">403 Forbidden</p>
+            '''
+            return HttpResponse(content=content)
+        if self.permission_required is None:
+            raise ImproperlyConfigured(
+                f"{self.__class__.__name__} is missing the "
+                f"permission_required attribute. Define "
+                f"{self.__class__.__name__}.permission_required, or override "
+                f"{self.__class__.__name__}.get_permission_required()."
+            )
+        if isinstance(self.permission_required, str):
+            perms = (self.permission_required,)
+        else:
+            perms = self.permission_required
+        return perms
 
-class StaffAccountView(LoginRequiredMixin, TemplateView):
+
+class StaffAccountView(PermissionRequiredMixin, TemplateView):
     template_name = 'staff/account.html'
+    permission_required = ('staff.change_staff',)
+    raise_exception = True
+
+    def get_permission_required(self):
+        if not (self.request.user.is_staff or self.request.user.is_superuser):
+            content = f'''
+                <p style="font-size: 2em; font-weight: bold; font-family: Times New Roman;">403 Forbidden</p>
+            '''
+            return HttpResponse(content=content)
+        if self.permission_required is None:
+            raise ImproperlyConfigured(
+                f"{self.__class__.__name__} is missing the "
+                f"permission_required attribute. Define "
+                f"{self.__class__.__name__}.permission_required, or override "
+                f"{self.__class__.__name__}.get_permission_required()."
+            )
+        if isinstance(self.permission_required, str):
+            perms = (self.permission_required,)
+        else:
+            perms = self.permission_required
+        return perms
 
 
-class ManagementView(LoginRequiredMixin, TemplateView):
+class ManagementView(PermissionRequiredMixin, TemplateView):
     template_name = 'staff/management.html'
+    permission_required = ('staff.change_staff', 'orders.view_order',)
+    raise_exception = True
+
+    def get_permission_required(self):
+        if not (
+                'management' in self.request.user.groups.all().values_list('name', flat=True) or
+                self.request.user.is_superuser
+        ):
+            content = f'''
+                <p style="font-size: 2em; font-weight: bold; font-family: Times New Roman;">403 Forbidden</p>
+            '''
+            return HttpResponse(content=content)
+        if self.permission_required is None:
+            raise ImproperlyConfigured(
+                f"{self.__class__.__name__} is missing the "
+                f"permission_required attribute. Define "
+                f"{self.__class__.__name__}.permission_required, or override "
+                f"{self.__class__.__name__}.get_permission_required()."
+            )
+        if isinstance(self.permission_required, str):
+            perms = (self.permission_required,)
+        else:
+            perms = self.permission_required
+        return perms
 
 
 # Представление, делающее сотрудника активным
@@ -86,6 +156,14 @@ class ManagementView(LoginRequiredMixin, TemplateView):
 def staff_restore_view(request, pk):
     # получаем сотрудника
     person = Staff.objects.get(id=pk)
+    if not (
+            'management' in request.user.groups.all().values_list('name', flat=True) or
+            request.user.is_superuser
+    ):
+        content = f'''
+            <p style="font-size: 2em; font-weight: bold; font-family: Times New Roman;">403 Forbidden</p>
+        '''
+        return HttpResponse(content=content)
     # меняем активность
     person.make_active()
 
@@ -97,6 +175,14 @@ def staff_restore_view(request, pk):
 def staff_remove_view(request, pk):
     # получаем сотрудника
     person = Staff.objects.get(id=pk)
+    if not (
+            'management' in request.user.groups.all().values_list('name', flat=True) or
+            request.user.is_superuser
+    ):
+        content = f'''
+            <p style="font-size: 2em; font-weight: bold; font-family: Times New Roman;">403 Forbidden</p>
+        '''
+        return HttpResponse(content=content)
     # меняем активность
     person.make_inactive()
 

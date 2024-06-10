@@ -1,0 +1,14 @@
+{% extends 'default.html' %}
+
+{% block title %}
+	Post
+{% endblock title %}
+
+{% block content %}
+    <h2>Новость</h2>
+    <hr>
+	Дата публикации: {{ post.created_at|date:'d.m.Y H:i' }}.
+	<br>
+    <h4>{{ post.headline }}</h4>
+	{{ post.content }}
+{% endblock content %}

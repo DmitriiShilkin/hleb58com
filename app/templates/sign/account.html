@@ -10,15 +10,7 @@
 	<button>
 		<a href="{% url 'profile' pk=request.user.pk %}">Настройка профиля</a>
 	</button>
-	{% for group in request.user.groups.all %}
-		{% if group.name == 'management'  %}
-			<button>
-				<a href="">Управление</a>
-			</button>
-		{% else %}
-			<button>
-				<a href="">Заказы</a>
-			</button>
-		{% endif %}
-	{% endfor %}
+	<button>
+		<a href="{% url 'order_list' %}">Заказы</a>
+	</button>
 {% endblock content %}

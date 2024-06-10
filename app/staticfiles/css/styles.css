@@ -11309,7 +11309,7 @@ p.about {
     right: 90px;
 }
 
-#user-link a {
+#account-link a {
     position: absolute;
     right: 155px;
 }
@@ -11317,4 +11317,9 @@ p.about {
 #reg-link a {
     position: absolute;
     right: 155px;
+}
+
+#cart-link a {
+    position: absolute;
+    right: 225px;
 }

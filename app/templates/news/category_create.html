@@ -1,0 +1,17 @@
+{% extends 'default.html' %}
+
+{% block title %}
+    Category Add
+{% endblock title %}
+
+{% block content %}
+    <h2>Добавление категории</h2>
+    <hr>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <hr>
+        <input type="button" onclick="history.back();" value="Назад"/>
+        <input type="submit" value="Сохранить" />
+    </form>
+{% endblock content %}

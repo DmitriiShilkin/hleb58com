@@ -2,6 +2,8 @@
 
 {% load custom_filters %}
 
+{% load static %}
+
 {% block title %}
 	Product
 {% endblock title %}
@@ -12,9 +14,19 @@
 	<h3><strong>{{ product.name }}</strong></h3>
 	{{ product.description|strong }}
 	<br>
-	{% for i in product.images.all %}
-		<img src="{{ i.image.url }}" alt="Изображение не найдено" width="500">
-	{% endfor %}
+	{% if product.images.all %}
+		{% for i in product.images.all %}
+			<img src="{{ i.image.url }}" width="500">
+		{% endfor %}
+	{% else %}
+		<img src="{% static 'no_image.png' %}" width="100">
+	{% endif %}
+	<p class="price">Цена: {{ product.new_price|floatformat:2 }} &#8381;</p>
+	<form action="{% url 'cart_add' product_id=product.id %}" method="post">
+		{{ cart_product_form }}
+		{% csrf_token %}
+		<input type="submit" value="Добавить в корзину">
+	</form>
 	<hr>
 	<button>
 		<a href="{% url 'send_message' %}">Написать нам</a>

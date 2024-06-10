@@ -1,0 +1,14 @@
+{% extends 'default.html' %}
+
+{% block title %}
+	Order Cancel
+{% endblock title %}
+
+{% block content %}
+    <h2>Отмена заказа</h2>
+    <hr>
+    <h4>Вы действительно хотите отменить заказ {{ order.uid }}</h4>
+    <hr>
+    <input type="button" onclick="history.back();" value="Назад"/>
+	<button><a href="{% url 'order_cancel' pk=order.pk %}">Отменить</a></button>
+{% endblock content %}

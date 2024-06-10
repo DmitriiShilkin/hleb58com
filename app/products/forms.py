@@ -5,7 +5,7 @@ from django.forms import NumberInput
 from .models import Product, Category
 
 
-# Форма для создания продукта
+# Форма для продукта
 class ProductForm(forms.ModelForm):
     weight = forms.IntegerField(widget=NumberInput(
         attrs={'type': 'number', 'id': 'weight', 'oninput': 'limit_input(id, 4)'}),
@@ -72,7 +72,6 @@ class ProductForm(forms.ModelForm):
             'is_visible',
             'sticker',
             'category',
-            'promo_code',
         ]
 
     def clean(self):
@@ -88,7 +87,7 @@ class ProductForm(forms.ModelForm):
         return cleaned_data
 
 
-# Форма для создания категории
+# Форма для категории
 class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category

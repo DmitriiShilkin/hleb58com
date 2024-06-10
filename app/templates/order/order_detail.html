@@ -1,0 +1,73 @@
+{% extends 'default.html' %}
+
+{% load static %}
+
+{% block title %}
+	Order
+{% endblock title %}
+
+{% block content %}
+    <h2>Заказ {{ order.uid }}</h2>
+    <h4>Создан: {{ order.created_at|date:'d.m.Y H:i' }}</h4>
+    <h4>На какую дату: {{ order.wish_date_at|date:'d.m.Y' }}</h4>
+    <h4>Статус: {{ order.get_status_display }}</h4>
+	<h4>Время выполнения: {{ order.get_duration }}</h4>
+    <hr>
+	<table cellpadding="10" align="center">
+		<tr>
+			<th>Фото</th>
+			<th>Наименование</th>
+			<th>Количество</th>
+			<th>Цена за единицу</th>
+			<th>Цена</th>
+		</tr>
+		{% for item in order.items.all %}
+			<tr>
+				{% if item.product.images.all %}
+					{% with item.product.images.first as obj  %}
+						<td><img src="{{ obj.image.url }}" alt="" width="100"></td>
+					{% endwith %}
+				{% else %}
+					<td><img src="{% static 'no_image.png' %}" width="100"></td>
+				{% endif %}
+				<td><a href="{% url 'product_detail' pk=item.product.pk %}">{{ item.product.name }}</a></td>
+				<td>{{ item.amount }} шт.</td>
+				<td class="num">{{ item.price|floatformat:2 }} &#8381;</td>
+                <td class="num">{{ item.get_cost|floatformat:2 }} &#8381;</td>
+			</tr>
+		{% endfor %}
+			{% if order.coupon %}
+            <tr class="total">
+                <td>"Купон {{ order.coupon.name }}" (скидка {{ order.coupon.discount }}%)</td>
+                <td colspan="3"></td>
+                <td class="num">- {{ order.get_discount|floatformat:"2" }} &#8381;</td>
+            </tr>
+            {% endif %}
+            <tr class="total">
+                <td>Итого</td>
+                <td colspan="3"></td>
+                <td class="num">{{ order.get_total_cost|floatformat:"2" }} &#8381;</td>
+            </tr>
+	</table>
+	<hr>
+	<form action="{% url 'order_repeat' pk=order.pk %}" method="post">
+		{% csrf_token %}
+		{{ order_repeat_form.as_p }}
+		<input type="submit" value="Повторить">
+	</form>
+	{% if form.errors %}
+		{% for field in form %}
+			{% for error in field.errors %}
+				<div class="alert alert-danger">
+					<strong>{{ field.label }}</strong>
+					<span>{{ error|escape }}</span>
+				</div>
+			{% endfor %}
+		{% endfor %}
+		{% for error in form.non_field_errors %}
+			<div class="alert alert-danger">
+				<strong>{{ error|escape }}</strong>
+			</div>
+		{% endfor %}
+	{% endif %}
+{% endblock content %}

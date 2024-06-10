@@ -1,9 +1,10 @@
-import asyncio
+# import asyncio
 
 from django.shortcuts import render, redirect
 
 from .forms import MessageForm, DealerForm
-from .services import send_message, handle_uploaded_file
+from .services import handle_uploaded_file
+from .tasks import send_message
 
 
 # Представление для отображения информации о компании
@@ -29,9 +30,9 @@ def send_message_view(request):
             email = form.cleaned_data.get('email')
             text = form.cleaned_data.get('text')
             # отправляем их в виде сообщения в телеграм
-            asyncio.run(
-                send_message(title, full_name, phone_number, email, text)
-            )
+            # asyncio.run(
+            send_message.delay(title, full_name, phone_number, email, text)
+            # )
 
             return redirect('product_list')
     else:
@@ -58,9 +59,9 @@ def become_dealer_view(request):
             text = form.cleaned_data.get('text')
             proposal = handle_uploaded_file(company_name, request.FILES.get('proposal'))
             # отправляем их в виде сообщения в телеграм
-            asyncio.run(
-                send_message(title, company_name, phone_number, proposal, text)
-            )
+            # asyncio.run(
+            send_message.delay(title, company_name, phone_number, proposal, text)
+            # )
 
             return redirect('product_list')
     else:

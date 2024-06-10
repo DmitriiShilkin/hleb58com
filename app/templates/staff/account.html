@@ -15,10 +15,9 @@
 			<button>
 				<a href="{% url 'management' %}">Управление</a>
 			</button>
-		{% else %}
-			<button>
-				<a href="">Заказы</a>
-			</button>
 		{% endif %}
 	{% endfor %}
+	<button>
+		<a href="{% url 'order_list' %}">Заказы</a>
+	</button>
 {% endblock content %}

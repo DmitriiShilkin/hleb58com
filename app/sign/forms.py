@@ -55,6 +55,7 @@ class CustomUserUpdateForm(UserChangeForm):
             "last_name",
             "first_name",
             "middle_name",
+            "individual_taxpayer_number",
             "birthdate",
             "city",
             "phone",

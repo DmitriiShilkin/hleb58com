@@ -8,13 +8,14 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView
 
 from .models import Product, Category, ProductImage
 from .forms import ProductForm, CategoryForm
+from cart.forms import CartAddProductForm
 
 
 # Представление для просмотра всех продуктов
 class ProductListView(ListView):
     model = Product
     context_object_name = 'visibles'
-    ordering = '-created_at'
+    ordering = 'name'
     template_name = 'products/product_list.html'
     paginate_by = 10
 
@@ -26,7 +27,7 @@ class ProductListView(ListView):
 class InvisibleListView(PermissionRequiredMixin, ListView):
     model = Product
     context_object_name = 'invisibles'
-    ordering = '-created_at'
+    ordering = 'name'
     template_name = 'products/invisible_list.html'
     paginate_by = 10
     permission_required = ('products.view_product',)
@@ -41,6 +42,14 @@ class ProductDetailView(DetailView):
     model = Product
     template_name = 'products/product_detail.html'
     context_object_name = 'product'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # product = get_object_or_404(Product, pk=kwargs["pk"])
+        cart_product_form = CartAddProductForm()
+        # context['product'] = product
+        context['cart_product_form'] = cart_product_form
+        return context
 
 
 # Представление, создающее продукт

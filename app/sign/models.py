@@ -59,6 +59,15 @@ class CustomUser(AbstractUser):
         blank=True,
         null=True,
     )
+    individual_taxpayer_number = models.CharField(
+        verbose_name='ИНН',
+        max_length=12,
+        validators=[
+            MinLengthValidator(12),
+        ],
+        blank=True,
+        null=True,
+    )
     birthdate = models.DateField(
         verbose_name='Дата рождения',
         blank=True,

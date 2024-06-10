@@ -10,6 +10,7 @@ class StaffUserAdmin(UserAdmin):
         ('Дополнительная информация', {
             'fields': (
                 'middle_name',
+                'individual_taxpayer_number',
                 'position',
                 'contract',
                 'birthdate',
@@ -25,9 +26,10 @@ class StaffUserAdmin(UserAdmin):
         (None, {
             'fields': (
                 'email',
-                'first_name',
                 'last_name',
+                'first_name',
                 'middle_name',
+                'individual_taxpayer_number',
                 'position',
                 'contract',
                 'birthdate',
