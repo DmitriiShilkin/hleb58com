@@ -11,6 +11,7 @@
 10. Управление заказами.
 11. Промокоды.
 12. Уведомления в телеграм и на почту через celery/redis.
+13. Новости.
 
 ### Образ Docker с приложением
 https://hub.docker.com/repository/docker/dmitriishilkin/hleb58/general
